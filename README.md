@@ -49,3 +49,19 @@ arreglar el problema lo mas rápido posible
 > *Quiero dar ideas o contribuir al mod!*
 
 Puedes hacerlo en el discord de fonikiki en el canal "mod-balatro-fonikiki".
+
+
+
+# Creditos
+
+## Autor:
+quevuelvalapeseta555 (El que esta escribiendo esto)
+
+## Sprites y arte:
+Cloudess y quevuelvalapeseta555
+
+## Algunas ideas de jokers y barajas:
+Lol_guy (Idea de joker hecha desde 0 por él), castro_1985, the_1_french y mane777fmarh
+
+## Consejos sobre balanceo:
+gatootaku, .darkness_505, chupichup, redagu777, castro_1985, w4lt3n_, mane777fmarh, Cloudess, jcmmanu, ratonxito_alv_56397, joel35910, fandegorillaz2011 y todavia_
