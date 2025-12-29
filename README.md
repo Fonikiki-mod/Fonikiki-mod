@@ -1,16 +1,20 @@
-## Hi there 👋
 
-<!--
-**Fonikiki-mod/Fonikiki-mod** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+# Fonikiki
+Un mod sobre Fonikiki
 
-Here are some ideas to get you started:
+Nota: Este mod requiere de [Steamodded](https://github.com/Steamodded/smods/releases/latest) y [Talisman](https://github.com/SpectralPack/Talisman/releases/latest).
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+Este mod añade:
+
+# -20 Nuevos jokers
+# -2 Nuevas barajas
+
+### [Discord de Fonikiki](https://discord.gg/q9UwzZYMmu)
+
+### Instalación:
+
+1. Descarga, instala y abre [Balatro Mod Manager](https://balatro-mod-manager.dasguney.com).
+2. Ve a la opción de buscar y descarga Steammodded y Talisman.
+3. En la misma aplicación entra en Settings y pulsa Open Mods Folder.
+4. Descomprime tu archivo ZIP y mueve la carpeta que contiene el archivo a la ventana que se abrió en el paso anterior.
+5. Abre Balatro.
