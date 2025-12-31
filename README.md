@@ -23,6 +23,7 @@ Este mod requiere de [Steamodded](https://github.com/Steamodded/smods/releases/l
 4. Descarga este archivo de GitHub como ZIP
 5. Descomprime el archivo ZIP y mueve la carpeta que este contiene a la ventana que se abrió en el paso anterior.
 6. Abre Balatro.
+7. Se recomienda encarecidamente no tocar la función de "Desactivar animaciones de la mano" en Talisman; de lo contrario, habrá un Joker que no funcione correctamente. Si quieres reemplazar esta función, recomiendo instalar Handy para aumentar aún más la velocidad del juego.
 
 # FAQ (Preguntas Frecuentes)
 
@@ -65,3 +66,4 @@ Lol_guy (Idea de joker hecha desde 0 por él), castro_1985, the_1_french y mane7
 
 ## Consejos sobre balanceo:
 gatootaku, .darkness_505, chupichup, redagu777, castro_1985, w4lt3n_, mane777fmarh, Cloudess, jcmmanu, ratonxito_alv_56397, joel35910, fandegorillaz2011 y todavia_
+
