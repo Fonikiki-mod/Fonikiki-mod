@@ -1286,7 +1286,7 @@ SMODS.Joker{
 
     unlocked = true,
     discovered = true,
-    atlas = 'Jokers1',
+    atlas = 'perro',
     pos = { x = 0, y = 0 },
     rarity = 1,
     cost = -1,
@@ -1411,4 +1411,5 @@ SMODS.Back{
             end
         }))
     end
+
 }
