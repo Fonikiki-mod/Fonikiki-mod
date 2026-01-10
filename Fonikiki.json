@@ -9,11 +9,12 @@
 	"priority": -20,
 	"badge_colour": "",
 	"badge_text_colour": "",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"mod_icon": "modicon.png",
 	"dependencies": [
         "Lovely (>=0.6)",
         "Steamodded (>=1.*)",
         "Talisman (>=2.5)"
     ]
+
 }
