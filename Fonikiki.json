@@ -1,0 +1,19 @@
+{
+	"id": "fonikiki",
+	"name": "Fonikiki",
+	"display_name": "Fonikiki",
+	"author": ["quevuelvalapeseta555"],
+	"description": "Un mod sobre fonikiki",
+	"prefix": "fonikiki",
+	"main_file": "main.lua",
+	"priority": -20,
+	"badge_colour": "",
+	"badge_text_colour": "",
+	"version": "1.0.1",
+	"mod_icon": "modicon.png",
+	"dependencies": [
+        "Lovely (>=0.6)",
+        "Steamodded (>=1.*)",
+        "Talisman (>=2.5)"
+    ]
+}
