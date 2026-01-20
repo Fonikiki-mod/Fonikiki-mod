@@ -1,11 +1,3 @@
---Establecer icono del mod
-SMODS.Atlas({
-    key = "modicon",
-    path = "icon.png",
-    px = 32,
-    py = 32
-})
-
 --Establecer mod path de location
 local mod_path = "" .. SMODS.current_mod.path
 local files = NFS.getDirectoryItems(mod_path .. "localization")
@@ -23,7 +15,14 @@ local function random_float(min, max)
     return min + (max - min) * math.random()
 end
 
-
+--ATLASES
+--Establecer icono del mod
+SMODS.Atlas({
+    key = "modicon",
+    path = "icon.png",
+    px = 32,
+    py = 32
+})
 
 -- Atlas Jokers
 SMODS.Atlas{
@@ -33,6 +32,7 @@ SMODS.Atlas{
     py = 95
 }
 
+--Atlas Tarot
 SMODS.Atlas{
     key = 'Tarot',
     path = 'Tarot.png',
@@ -53,8 +53,7 @@ SMODS.Atlas{
     key = 'balatro_balatrez',
     path = 'Balatro_balatrez.png',
     px = 406,
-    py = 448,
-    disable_mipmap = true
+    py = 448
 }
 
 --Atlas joker que cojones
@@ -62,7 +61,8 @@ SMODS.Atlas{
     key = 'que_cojones',
     path = 'pero_que_cojones_tio.png',
     px = 526,
-    py = 705
+    py = 705,
+    disable_mipmap = true
 }
 
 -- Atlas Barajas
@@ -73,6 +73,7 @@ SMODS.Atlas{
     py = 95
 }
 
+--JOKER
 --Click Click Click
 SMODS.Joker{
     key = 'fonikiki_click',
@@ -910,7 +911,7 @@ SMODS.Joker{
     end,
 }
 
---Error (Terminado en tiempo record, no esperaba que fuera tan fácil xd) PD: Añadir que pueda hacer mas cosas aparte del mult o las chips en proxima actualización
+--Error (Terminado en tiempo record, no esperaba que fuera tan fácil xd) PD: Añadir que pueda hacer mas cosas aparte del mult o las chips en proxima actualización PPD: Me da pereza ahora, lo dejo así y ya en una proxima proxima actualización lo hago
 SMODS.Joker{
     key = 'fonikiki_error',
     loc_txt = {
@@ -946,7 +947,7 @@ SMODS.Joker{
     end,
 }
 
---ANDALUCIAAAA DONDE VIVO YO QUILLO XDDD (estoy enloqueciendo)
+--ANDALUCIAAAA DONDE VIVO YO :DDDD (estoy enloqueciendo) JOKER
 SMODS.Joker{ 
     key = "fonikiki_andalucia",
     loc_txt = {
@@ -1000,6 +1001,180 @@ SMODS.Joker{
                         message = created_joker and localize('k_plus_joker') or nil
                     }
                 end
+            end
+        end
+    end
+}
+
+--¿Que cojones? joker
+SMODS.Joker{
+    key = 'fonikiki_que_cojones',
+    loc_txt = {
+        name = '¿Que cojones?',
+        text = {
+            '{C:green}pero que cojones',
+            '{C:green}porque hay cuatro gatos',
+            '{C:green}jugando al balatro en mi casa',
+            '{C:green}pero que cojones tio',
+            '{C:green}cuidado tio ese tiene doble pareja',
+            ' ',
+            'Cuando se descartan {C:attention}4{C:inactive} [#2#]{} cartas el multi aumenta',
+            'en {C:mult}4{}. Aumenta en {C:mult}8{} cuando se juega {C:attention}doble pareja{}.',
+            'Se restablece en cada ronda',
+            '{C:inactive}(Actual: {C:mult}+#1#{C:inactive} Mult)',
+        },
+    },
+
+    unlocked = true,
+    discovered = true,
+    atlas = 'que_cojones',
+    pos = { x = 0, y = 0 },
+    rarity = 2,
+    cost = 8,
+    blueprint_compat = true,
+    config = { extra = { mult = 0, count = 0, threshold = 4, gain = 4, hand_gain = 8 } },
+
+    loc_vars = function(self, info_queue, center)
+        local faltan = (center.ability.extra.threshold or 4) - (center.ability.extra.count or 0)
+        return { vars = { center.ability.extra.mult, faltan } }
+    end,
+
+    calculate = function(self, card, context)
+        if context.discard and not context.blueprint then
+            card.ability.extra.count = (card.ability.extra.count or 0) + 1
+            if card.ability.extra.count >= (card.ability.extra.threshold or 4) then
+                card.ability.extra.count = 0
+                card.ability.extra.mult = card.ability.extra.mult + (card.ability.extra.gain or 4)
+                return {
+                    message = 'Miau',
+                    colour = G.C.MULT
+                }
+            end
+        end
+        if context.before and context.scoring_name == "Two Pair" and not context.blueprint then
+            local gain = card.ability.extra.hand_gain or 8
+            card.ability.extra.mult = card.ability.extra.mult + gain
+            return {
+                message = 'Miau',
+                colour = G.C.MULT
+            }
+        end
+        if context.joker_main and card.ability.extra.mult > 0 then
+            return {
+                mult_mod = card.ability.extra.mult,
+                message = '+' .. card.ability.extra.mult .. ' Mult'
+            }
+        end
+        if context.end_of_round and not (context.individual or context.repetition or context.blueprint) then
+            card.ability.extra.mult = 0
+            card.ability.extra.count = 0
+        end
+    end
+}
+
+--goofy ahh joker
+SMODS.Joker{
+    key = 'fonikiki_balatrez',
+    loc_txt = {
+        name = 'Balatro Balatrez',
+        text = {
+            'Al final del {C:attention}Ante{}, añade {C:dark_edition}+1{} espacio de Joker',
+            'por cada {C:money}#2#${} que tengas. El requisito',
+            'aumenta en {C:money}25${} cada Ante.',
+            '{C:inactive}(Espacios añadidos: {C:dark_edition}+#1#{C:inactive})'
+        },
+    },
+    unlocked = true,
+    discovered = true,
+    atlas = 'balatro_balatrez',
+    pos = { x = 0, y = 0 },
+    display_size = { w = 71, h = 76 },
+    rarity = 3,
+    cost = 5,
+    blueprint_compat = false,
+    config = { extra = { added_slots = 0 } },
+
+    loc_vars = function(self, info_queue, center)
+        local ante_corregido = math.max(1, G.GAME.round_resets.ante)
+        local current_req = 50 + (25 * (ante_corregido - 1))
+        return { vars = { center.ability.extra.added_slots, current_req } }
+    end,
+
+    remove_from_deck = function(self, card, from_debuff)
+        if card.ability.extra.added_slots > 0 then
+            G.jokers.config.card_limit = G.jokers.config.card_limit - card.ability.extra.added_slots
+            card.ability.extra.added_slots = 0
+        end
+    end,
+
+    calculate = function(self, card, context)
+        if context.end_of_round and G.GAME.blind.boss and not context.game_over and not (context.individual or context.repetition or context.blueprint) then
+            local ante_corregido = math.max(1, G.GAME.round_resets.ante)
+            local current_req = 50 + (25 * (ante_corregido - 1))
+            local dollars = G.GAME.dollars
+            local slots_to_add = 0
+            if type(dollars) == 'table' then
+                slots_to_add = math.floor(to_number(dollars / current_req))
+            else
+                slots_to_add = math.floor(dollars / current_req)
+            end
+            if slots_to_add > 0 then
+                card.ability.extra.added_slots = card.ability.extra.added_slots + slots_to_add
+                G.jokers.config.card_limit = G.jokers.config.card_limit + slots_to_add
+                return {
+                    message = '+' .. slots_to_add .. ' Slots',
+                    colour = G.C.DARK_EDITION
+                }
+            end
+        end
+    end
+}
+
+--Perro de mierda joker
+SMODS.Joker{
+    key = 'fonikiki_perro',
+    loc_txt = {
+        name = 'perro de mierda',
+        text = {
+            '{C:mult}+1{} Multi.',
+            '{C:green}#1# en #2#{} probabilidades de',
+            'obtener {X:black,C:red,s:2}^#3#{} de multi'
+        },
+    },
+
+    unlocked = true,
+    discovered = true,
+    atlas = 'perro',
+    pos = { x = 0, y = 0 },
+    rarity = 1,
+    cost = -1,
+    blueprint_compat = true,
+    config = { extra = { odds = 500, pow = 500 } },
+
+    loc_vars = function(self, info_queue, card)
+        return { 
+            vars = { 
+                (G.GAME.probabilities.normal or 1), 
+                card.ability.extra.odds, 
+                card.ability.extra.pow 
+            } 
+        }
+    end,
+
+    calculate = function(self, card, context)
+        if context.joker_main then
+            -- Verificación de probabilidad compatible con Oops! All 6s
+            if pseudorandom('perro') < G.GAME.probabilities.normal / card.ability.extra.odds then
+                return {
+                    e_mult = card.ability.extra.pow
+                }
+            else
+                -- Efecto base garantizado
+                return {
+                    mult_mod = 1,
+                    message = '+1 Multi.',
+                    colour = G.C.MULT
+                }
             end
         end
     end
@@ -1131,7 +1306,6 @@ SMODS.Joker{
     loc_vars = function(self, info_queue, card)
         local total_jokers = (G.jokers and #G.jokers.cards) or 0
         local total_repetitions = total_jokers * self.config.extra.bonus_per_joker
-        
         local display_value
         if total_repetitions == math.floor(total_repetitions) then
             display_value = string.format("%.0f", total_repetitions)
@@ -1157,179 +1331,72 @@ SMODS.Joker{
     end,
 }
 
-SMODS.Joker{
-    key = 'fonikiki_que_cojones',
+--CONSUMIBLES
+SMODS.Consumable{
+    key = 'fonikiki_intercambio_palos',
+    set = 'Tarot',
     loc_txt = {
-        name = '¿Que cojones?',
+        name = 'El Editor',
         text = {
-            '{C:green}pero que cojones',
-            '{C:green}porque hay cuatro gatos',
-            '{C:green}jugando al balatro en mi casa',
-            '{C:green}pero que cojones tio',
-            '{C:green}cuidado tio ese tiene doble pareja',
-            ' ',
-            'Cuando se descartan {C:attention}4{C:inactive} [#2#]{} cartas el multi aumenta',
-            'en {C:mult}4{}. Aumenta en {C:mult}8{} cuando se juega {C:attention}doble pareja{}.',
-            'Se restablece en cada ronda',
-            '{C:inactive}(Actual: {C:mult}+#1#{C:inactive} Mult)',
-        },
-    },
-
-    unlocked = true,
-    discovered = true,
-    atlas = 'que_cojones',
-    pos = { x = 0, y = 0 },
-    rarity = 2,
-    cost = 8,
-    blueprint_compat = true,
-    config = { extra = { mult = 0, count = 0, threshold = 4, gain = 4, hand_gain = 8 } },
-
-    loc_vars = function(self, info_queue, center)
-        local faltan = (center.ability.extra.threshold or 4) - (center.ability.extra.count or 0)
-        return { vars = { center.ability.extra.mult, faltan } }
-    end,
-
-    calculate = function(self, card, context)
-        if context.discard and not context.blueprint then
-            card.ability.extra.count = (card.ability.extra.count or 0) + 1
-            if card.ability.extra.count >= (card.ability.extra.threshold or 4) then
-                card.ability.extra.count = 0
-                card.ability.extra.mult = card.ability.extra.mult + (card.ability.extra.gain or 4)
-                return {
-                    message = 'Miau',
-                    colour = G.C.MULT
-                }
-            end
-        end
-        if context.before and context.scoring_name == "Two Pair" and not context.blueprint then
-            local gain = card.ability.extra.hand_gain or 8
-            card.ability.extra.mult = card.ability.extra.mult + gain
-            return {
-                message = 'Miau',
-                colour = G.C.MULT
-            }
-        end
-        if context.joker_main and card.ability.extra.mult > 0 then
-            return {
-                mult_mod = card.ability.extra.mult,
-                message = '+' .. card.ability.extra.mult .. ' Mult'
-            }
-        end
-        if context.end_of_round and not (context.individual or context.repetition or context.blueprint) then
-            card.ability.extra.mult = 0
-            card.ability.extra.count = 0
-        end
-    end
-}
-
---goofy ahh joker
-SMODS.Joker{
-    key = 'fonikiki_balatrez',
-    loc_txt = {
-        name = 'Balatro Balatrez',
-        text = {
-            'Al final del {C:attention}Ante{}, añade {C:dark_edition}+1{} espacio de Joker',
-            'por cada {C:money}#2#${} que tengas. El requisito',
-            'aumenta en {C:money}25${} cada Ante.',
-            '{C:inactive}(Espacios añadidos: {C:dark_edition}+#1#{C:inactive})'
-        },
-    },
-    unlocked = true,
-    discovered = true,
-    atlas = 'balatro_balatrez',
-    pos = { x = 0, y = 0 },
-    display_size = { w = 71, h = 76 },
-    rarity = 3,
-    cost = 5,
-    blueprint_compat = false,
-    config = { extra = { added_slots = 0 } },
-
-    loc_vars = function(self, info_queue, center)
-        local ante_corregido = math.max(1, G.GAME.round_resets.ante)
-        local current_req = 50 + (25 * (ante_corregido - 1))
-        return { vars = { center.ability.extra.added_slots, current_req } }
-    end,
-
-    remove_from_deck = function(self, card, from_debuff)
-        if card.ability.extra.added_slots > 0 then
-            G.jokers.config.card_limit = G.jokers.config.card_limit - card.ability.extra.added_slots
-            card.ability.extra.added_slots = 0
-        end
-    end,
-
-    calculate = function(self, card, context)
-        if context.end_of_round and G.GAME.blind.boss and not context.game_over and not (context.individual or context.repetition or context.blueprint) then
-            local ante_corregido = math.max(1, G.GAME.round_resets.ante)
-            local current_req = 50 + (25 * (ante_corregido - 1))
-            local dollars = G.GAME.dollars
-            local slots_to_add = 0
-            if type(dollars) == 'table' then
-                slots_to_add = math.floor(to_number(dollars / current_req))
-            else
-                slots_to_add = math.floor(dollars / current_req)
-            end
-            if slots_to_add > 0 then
-                card.ability.extra.added_slots = card.ability.extra.added_slots + slots_to_add
-                G.jokers.config.card_limit = G.jokers.config.card_limit + slots_to_add
-                return {
-                    message = '+' .. slots_to_add .. ' Slots',
-                    colour = G.C.DARK_EDITION
-                }
-            end
-        end
-    end
-}
-
-SMODS.Joker{
-    key = 'fonikiki_perro',
-    loc_txt = {
-        name = 'perro de mierda',
-        text = {
-            '{C:mult}+1{} Multi.',
-            '{C:green}#1# en #2#{} probabilidades de',
-            'obtener {X:black,C:red,s:2}^#3#{} de multi'
-        },
-    },
-
-    unlocked = true,
-    discovered = true,
-    atlas = 'perro',
-    pos = { x = 0, y = 0 },
-    rarity = 1,
-    cost = -1,
-    blueprint_compat = true,
-    config = { extra = { odds = 500, pow = 500 } },
-
-    loc_vars = function(self, info_queue, card)
-        return { 
-            vars = { 
-                (G.GAME.probabilities.normal or 1), 
-                card.ability.extra.odds, 
-                card.ability.extra.pow 
-            } 
+            'Selecciona {C:attention}2{} cartas.',
+            'Convierte el palo de la carta de la',
+            '{C:attention}izquierda{} a el palo de la de la {C:attention}derecha{}',
+            '{C:inactive}(Arrastra para acomodar)'
         }
+    },
+
+    atlas = 'Tarot',
+    pos = { x = 2, y = 0 },
+    cost = 3,
+    config = { max_highlighted = 2 },
+
+    can_use = function(self, card)
+        return G.hand and #G.hand.highlighted == 2
     end,
 
-    calculate = function(self, card, context)
-        if context.joker_main then
-            -- Verificación de probabilidad compatible con Oops! All 6s
-            if pseudorandom('perro') < G.GAME.probabilities.normal / card.ability.extra.odds then
-                return {
-                    e_mult = card.ability.extra.pow
-                }
-            else
-                -- Efecto base garantizado
-                return {
-                    mult_mod = 1,
-                    message = '+1 Multi.',
-                    colour = G.C.MULT
-                }
-            end
+    use = function(self, card, area, copier)
+        local cards = {}
+        for i=1, #G.hand.highlighted do 
+            cards[i] = G.hand.highlighted[i] 
         end
+        table.sort(cards, function (a, b) return a.T.x < b.T.x end)
+        local card_izq = cards[1]
+        local card_der = cards[2]
+        local nuevo_palo = card_der.base.suit
+        G.E_MANAGER:add_event(Event({
+            trigger = 'after',
+            delay = 0.4,
+            func = function()
+                play_sound('tarot1')
+                card_izq:flip()
+                card_der:flip()
+                G.E_MANAGER:add_event(Event({
+                    trigger = 'after',
+                    delay = 0.4,
+                    func = function()
+                        SMODS.change_base(card_izq, nuevo_palo, card_izq.base.value)
+                        G.E_MANAGER:add_event(Event({
+                            trigger = 'after',
+                            delay = 0.4,
+                            func = function()
+                                play_sound('tarot2', 1, 0.6)
+                                card_izq:flip()
+                                card_der:flip()
+                                card_izq:juice_up(0.3, 0.5)
+                                return true
+                            end
+                        }))
+                        return true
+                    end
+                }))
+                return true
+            end
+        }))
     end
 }
 
-SMODS.Consumable {
+--Spectral Dios
+SMODS.Consumable{
     key = 'fonikiki_GOD',
     set = 'Spectral',
     loc_txt = {
@@ -1376,7 +1443,7 @@ SMODS.Consumable {
 }
 
 
---Primera baraja!! PD: Que facil a comparación de los jokers!!!
+--BARAJAS
 --Baraja Inversionista
 SMODS.Back{
     key = 'fonikiki_inversionista',
@@ -1421,7 +1488,7 @@ SMODS.Back{
             'Inicias la partida con:',
             '{C:blue}1{} sola mano,',
             '{C:red}8{} descartes,',
-            'y {C:money}20{} dolares'
+            'y {C:money}30{} dolares'
         }
     },
 
@@ -1432,7 +1499,7 @@ SMODS.Back{
     apply = function(self)
         G.GAME.starting_params.hands = 1
         G.GAME.starting_params.discards = 8
-        G.GAME.starting_params.dollars = 20
+        G.GAME.starting_params.dollars = 30
     end
 }
 
@@ -1466,3 +1533,9 @@ SMODS.Back{
         }))
     end
 }
+
+--REWORKS
+--Rework de nombre del The Hermit a "20 euros son 20 euros"
+SMODS.current_mod.process_loc_text = function()
+    G.localization.descriptions.Tarot.c_hermit.name = "20 euros son 20 euros"
+end
