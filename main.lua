@@ -91,6 +91,7 @@ SMODS.Joker{
     pos = { x = 1, y = 3 },
     rarity = 1,
     cost = 4,
+    blueprint_compat = true,
     config = {
 		extra = {
 			mult_value = 80,     
@@ -1324,6 +1325,8 @@ SMODS.Consumable{
     atlas = 'Tarot',
     pos = { x = 2, y = 0 },
     cost = 3,
+    unlocked = true,
+    discovered = true,
     config = { max_highlighted = 2 },
 
     can_use = function(self, card)
@@ -1386,6 +1389,8 @@ SMODS.Consumable{
     atlas = 'Tarot',
     pos = { x = 3, y = 0 },
     cost = 3,
+    unlocked = true,
+    discovered = true,
     config = { max_highlighted = 2 },
 
     can_use = function(self, card)
@@ -1410,7 +1415,7 @@ SMODS.Consumable{
                         
                         for i=1, #G.hand.highlighted do
                             local target_card = G.hand.highlighted[i]
-                            SMODS.change_base(target_card, random_card.base.suit, random_card.base.value)
+subi                            SMODS.change_base(target_card, random_card.base.suit, random_card.base.value)
                             target_card:set_ability(random_card.config.center)
                             if random_card.edition then target_card:set_edition(random_card.edition, true) end
                             if random_card.seal then target_card:set_seal(random_card.seal, true) end
@@ -1448,11 +1453,14 @@ SMODS.Consumable{
             'del mod {E:1,C:red}Fonikiki{}'
         }
     },
+
     cost = 20,
     atlas = 'Tarot',
     pos = { x = 0, y = 0 },
     soul_pos = { x = 1, y = 0 },
     soul_set = 'Tarot',
+    unlocked = true,
+    discovered = true,
     soul_rate = 0.03,
     can_repeat_soul = true,
     hidden = true,
@@ -1460,6 +1468,7 @@ SMODS.Consumable{
     can_use = function(self, card)
         return #G.jokers.cards < G.jokers.config.card_limit
     end,
+    
     use = function(self, card, area, copier)
         G.E_MANAGER:add_event(Event({
             trigger = 'after',
