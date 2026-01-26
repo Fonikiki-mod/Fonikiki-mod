@@ -1393,7 +1393,6 @@ SMODS.Consumable{
     end,
 
     use = function(self, card, area, copier)
-        -- 1. Sonido inicial y giro
         G.E_MANAGER:add_event(Event({
             trigger = 'after',
             delay = 0.4,
@@ -1403,7 +1402,6 @@ SMODS.Consumable{
                     G.hand.highlighted[i]:flip()
                 end
                 
-                -- 2. Espera boca abajo para el cambio técnico
                 G.E_MANAGER:add_event(Event({
                     trigger = 'after',
                     delay = 0.4,
@@ -1418,7 +1416,6 @@ SMODS.Consumable{
                             if random_card.seal then target_card:set_seal(random_card.seal, true) end
                         end
 
-                        -- 3. Sonido final y revelar
                         G.E_MANAGER:add_event(Event({
                             trigger = 'after',
                             delay = 0.4,
@@ -1452,15 +1449,14 @@ SMODS.Consumable{
         }
     },
     cost = 20,
-    atlas = 'Tarot', -- Asegúrate de que este atlas esté definido en tu mod
+    atlas = 'Tarot',
     pos = { x = 0, y = 0 },
-    soul_pos = { x = 1, y = 0 }, -- Posición del sprite del "alma"
-    soul_set = 'Tarot', -- Permite aparecer en sobres de Tarot
-    soul_rate = 0.03, -- Probabilidad de aparición (3%)
-    can_repeat_soul = true, -- Puede aparecer aunque ya tengas uno
-    hidden = true, -- Oculto en la colección hasta ser encontrado
+    soul_pos = { x = 1, y = 0 },
+    soul_set = 'Tarot',
+    soul_rate = 0.03,
+    can_repeat_soul = true,
+    hidden = true,
 
-    -- Verifica si hay espacio para el nuevo Joker
     can_use = function(self, card)
         return #G.jokers.cards < G.jokers.config.card_limit
     end,
