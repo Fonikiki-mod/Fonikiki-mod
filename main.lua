@@ -577,9 +577,9 @@ SMODS.Joker{
     loc_txt = {
         name = 'Fresa {C:gold}dorada{} de {C:dark_edition}Farewell{}',
         text = {
-            '{C:white,X:red}X#1#{} multi.',
+            '{X:mult,C:white}X#1#{} Multi.',
             '{C:green}#2# en #3#{} probabilidades',
-            'de obtener {X:black,C:red,s:2}^#4#{} de multi'
+            'de obtener {X:black,C:red,s:2}^#4#{} de Multi'
         }
     },
 
@@ -601,59 +601,34 @@ SMODS.Joker{
     
     loc_vars = function(self, info_queue, card)
         local extra = card.ability.extra
-        local power_mult_display = extra.power_mult or self.config.extra.power_mult
-
         return { 
             vars = { 
-                extra.mult_value or self.config.extra.mult_value,
+                extra.mult_value,
                 (G.GAME.probabilities.normal or 1), 
-                extra.odds or self.config.extra.odds,
-                power_mult_display
+                extra.odds,
+                extra.power_mult
             } 
         }
-    end,
-
-    -- Función de migración porque por alguna razón los valores no migran. (quitar esto si funciona bien en la beta)
-    update_ability = function(self, card)
-        local extra = card.ability.extra
-        local config_extra = self.config.extra
-
-        if extra.mult_value ~= config_extra.mult_value then
-            extra.mult_value = config_extra.mult_value
-            card.T.misc_data.updated = true 
-        end
-        
-        if extra.power_mult ~= config_extra.power_mult then
-            extra.power_mult = config_extra.power_mult
-            card.T.misc_data.updated = true
-        end
-
-        if extra.odds ~= config_extra.odds then
-            extra.odds = config_extra.odds
-            card.T.misc_data.updated = true
-        end
-        return card
     end,
 
     calculate = function(self, card, context)
         local extra = card.ability.extra
 
         if context.joker_main then
-            
-            local returns = {
-                mult_mod = extra.mult_value, 
-                mult_mod_type = 'mult',
-                colour = G.C.MULT
-            }
-
+            -- Verificamos la probabilidad del exponente primero
             if pseudorandom('fonikiki_farewell_power') < G.GAME.probabilities.normal / extra.odds then
-                returns.mult_mod = 0
-                returns.e_mult = extra.power_mult
-                returns.colour = G.C.RED
+                return {
+                    message = '^' .. extra.power_mult .. '!',
+                    e_mult = extra.power_mult,
+                    colour = G.C.RED
+                }
             else
-                returns.message = "X" .. extra.mult_value .. " Multi"
+                -- Multiplicador X4 real
+                return {
+                    message = 'X' .. extra.mult_value,
+                    Xmult_mod = extra.mult_value
+                }
             end
-            return returns
         end
     end
 }
@@ -1284,7 +1259,8 @@ SMODS.Joker{
             "{s:1.2}El precio de este {C:attention,s:1.2}gran conocimiento{s:1.2} fue la melena:",
             "{s:1.2}su pelo huyó para dar espacio al {C:tarot,s:1.2}cerebro{s:1.2}.",
             "­",
-            "Este comodín consigue {C:attention}0.5{} reactivaciones por cada {C:joker}Joker{} que tengas.",
+            "Este comodín consigue {C:attention}0.5{} reactivaciones",
+            "de carta por cada {C:attention}Joker{} que tengas.",
             "{C:inactive}(Actualmente {C:attention}#1#{C:inactive} reactivaciones){}"
         }
     },
@@ -1383,6 +1359,75 @@ SMODS.Consumable{
                                 card_izq:flip()
                                 card_der:flip()
                                 card_izq:juice_up(0.3, 0.5)
+                                return true
+                            end
+                        }))
+                        return true
+                    end
+                }))
+                return true
+            end
+        }))
+    end
+}
+
+SMODS.Consumable{
+    key = 'fonikiki_algoritmo',
+    set = 'Tarot',
+    loc_txt = {
+        name = 'El Algoritmo',
+        text = {
+            'Convierte hasta {C:attention}2{} cartas',
+            'seleccionadas en una misma carta',
+            '{C:attention}aleatoria{} de tu baraja.'
+        }
+    },
+
+    atlas = 'Tarot',
+    pos = { x = 3, y = 0 },
+    cost = 3,
+    config = { max_highlighted = 2 },
+
+    can_use = function(self, card)
+        return G.hand and #G.hand.highlighted >= 1 and #G.hand.highlighted <= 2
+    end,
+
+    use = function(self, card, area, copier)
+        -- 1. Sonido inicial y giro
+        G.E_MANAGER:add_event(Event({
+            trigger = 'after',
+            delay = 0.4,
+            func = function()
+                play_sound('tarot1')
+                for i=1, #G.hand.highlighted do
+                    G.hand.highlighted[i]:flip()
+                end
+                
+                -- 2. Espera boca abajo para el cambio técnico
+                G.E_MANAGER:add_event(Event({
+                    trigger = 'after',
+                    delay = 0.4,
+                    func = function()
+                        local random_card = pseudorandom_element(G.playing_cards, pseudoseed('replica_tarot'))
+                        
+                        for i=1, #G.hand.highlighted do
+                            local target_card = G.hand.highlighted[i]
+                            SMODS.change_base(target_card, random_card.base.suit, random_card.base.value)
+                            target_card:set_ability(random_card.config.center)
+                            if random_card.edition then target_card:set_edition(random_card.edition, true) end
+                            if random_card.seal then target_card:set_seal(random_card.seal, true) end
+                        end
+
+                        -- 3. Sonido final y revelar
+                        G.E_MANAGER:add_event(Event({
+                            trigger = 'after',
+                            delay = 0.4,
+                            func = function()
+                                play_sound('tarot2', 1, 0.6)
+                                for i=1, #G.hand.highlighted do
+                                    G.hand.highlighted[i]:flip()
+                                    G.hand.highlighted[i]:juice_up(0.3, 0.5)
+                                end
                                 return true
                             end
                         }))
