@@ -1415,7 +1415,7 @@ SMODS.Consumable{
                         
                         for i=1, #G.hand.highlighted do
                             local target_card = G.hand.highlighted[i]
-subi                            SMODS.change_base(target_card, random_card.base.suit, random_card.base.value)
+                            SMODS.change_base(target_card, random_card.base.suit, random_card.base.value)
                             target_card:set_ability(random_card.config.center)
                             if random_card.edition then target_card:set_edition(random_card.edition, true) end
                             if random_card.seal then target_card:set_seal(random_card.seal, true) end
