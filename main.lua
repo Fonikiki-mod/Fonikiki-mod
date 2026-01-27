@@ -331,7 +331,7 @@ SMODS.Joker{
     
     calculate = function(self, card, context)
         if context.discard then
-            local messages = {'Who is fonikiki?', 'What is a "Alexby"', 'Buy token fan and sell perkeo', 'Balatoro', 'Patalano', 'Perkeo stinks', 'balatotor balatrez', 'Token fan better', 'Im not a bot', 'Photochad=trash', 'Play and buy silksong', 'Nanefonikikinf', 'Who records to .MKV?', 'no', 'lol', 'vinagre', 'I want a coffee', 'I am form the Earth', 'I am from balatroland', 'Ñ?????', 'hahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahahaha', 'Twitch chat sucks'}
+            local messages = {'Who is fonikiki?', 'What is a "Alexby"', "Hey, I'm in the mod!!", 'Buy token fan and sell perkeo', 'Balatoro', 'Patalano', 'Perkeo stinks', 'balatotor balatrez', 'Token fan better', 'Im not a bot', 'Photochad=trash', 'Play and buy silksong', 'Nanefonikikinf', 'Who records to .MKV?', 'no', 'lol', 'vinagre', 'I want a coffee', 'I am form the Earth', 'I am from balatroland', 'Ñ?????', 'hahahahahahahahahahahahahahahahahahahahahahahahahaha'}
             local random_message = pseudorandom_element(messages, pseudoseed('lol_guy_message'))
             card_eval_status_text(card, 'extra', nil, nil, nil,
                 { message = random_message,
@@ -1008,6 +1008,7 @@ SMODS.Joker{
     rarity = 2,
     cost = 8,
     blueprint_compat = true,
+    display_size = { w = 71, h = 95 },
     config = { extra = { mult = 0, count = 0, threshold = 4, gain = 4, hand_gain = 8 } },
 
     loc_vars = function(self, info_queue, center)
@@ -1123,7 +1124,8 @@ SMODS.Joker{
     atlas = 'perro',
     pos = { x = 0, y = 0 },
     rarity = 1,
-    cost = -1,
+    display_size = { w = 71, h = 95 },
+    cost = 1,
     blueprint_compat = true,
     config = { extra = { odds = 500, pow = 500 } },
 
