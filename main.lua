@@ -641,7 +641,7 @@ SMODS.Joker{
         name = 'El Café',
         text = {
             'Consigue {C:white,X:red}X0.2{} de multi. Si se',
-            'juega una mano de {C:attention}5{} cartas.',
+            'juega una mano de {C:attention}5{} cartas y puntua.',
             '{C:inactive}(Actualmente {X:mult,C:white}X#1#{C:inactive} Mult.)'
         }
     },
@@ -1317,9 +1317,9 @@ SMODS.Consumable{
     loc_txt = {
         name = 'El Editor',
         text = {
-            'Selecciona {C:attention}2{} cartas.',
-            'Convierte el palo de la carta de la',
-            '{C:attention}izquierda{} a el palo de la de la {C:attention}derecha{}',
+            'Selecciona {C:attention}3{} cartas.',
+            'Convierte el palo de las {C:attention}2{} cartas de la',
+            '{C:attention}izquierda{} al palo de la de la {C:attention}derecha{}.',
             '{C:inactive}(Arrastra para acomodar)'
         }
     },
@@ -1329,10 +1329,10 @@ SMODS.Consumable{
     cost = 3,
     unlocked = true,
     discovered = true,
-    config = { max_highlighted = 2 },
+    config = { max_highlighted = 3 },
 
     can_use = function(self, card)
-        return G.hand and #G.hand.highlighted == 2
+        return G.hand and #G.hand.highlighted == 3
     end,
 
     use = function(self, card, area, copier)
@@ -1341,29 +1341,45 @@ SMODS.Consumable{
             cards[i] = G.hand.highlighted[i] 
         end
         table.sort(cards, function (a, b) return a.T.x < b.T.x end)
-        local card_izq = cards[1]
-        local card_der = cards[2]
+        
+        local card_izq1 = cards[1]
+        local card_izq2 = cards[2]
+        local card_der = cards[3]
         local nuevo_palo = card_der.base.suit
+
         G.E_MANAGER:add_event(Event({
             trigger = 'after',
             delay = 0.4,
             func = function()
                 play_sound('tarot1')
-                card_izq:flip()
+                card_izq1:flip()
+                card_izq2:flip()
                 card_der:flip()
+                
                 G.E_MANAGER:add_event(Event({
                     trigger = 'after',
                     delay = 0.4,
                     func = function()
-                        SMODS.change_base(card_izq, nuevo_palo, card_izq.base.value)
+                        SMODS.change_base(card_izq1, nuevo_palo, card_izq1.base.value)
+                        SMODS.change_base(card_izq2, nuevo_palo, card_izq2.base.value)
+                        
                         G.E_MANAGER:add_event(Event({
                             trigger = 'after',
                             delay = 0.4,
                             func = function()
                                 play_sound('tarot2', 1, 0.6)
-                                card_izq:flip()
+                                card_izq1:flip()
+                                card_izq2:flip()
                                 card_der:flip()
-                                card_izq:juice_up(0.3, 0.5)
+                                card_izq1:juice_up(0.3, 0.5)
+                                card_izq2:juice_up(0.3, 0.5)
+                                G.E_MANAGER:add_event(Event({
+                                    trigger = 'after',
+                                    delay = 0.4,
+                                    func = function()
+                                        return true
+                                    end
+                                }))
                                 return true
                             end
                         }))
@@ -1382,7 +1398,7 @@ SMODS.Consumable{
     loc_txt = {
         name = 'El Algoritmo',
         text = {
-            'Convierte hasta {C:attention}2{} cartas',
+            'Convierte hasta {C:attention}3{} cartas',
             'seleccionadas en una misma carta',
             '{C:attention}aleatoria{} de tu baraja.'
         }
@@ -1393,10 +1409,10 @@ SMODS.Consumable{
     cost = 3,
     unlocked = true,
     discovered = true,
-    config = { max_highlighted = 2 },
+    config = { max_highlighted = 3 },
 
     can_use = function(self, card)
-        return G.hand and #G.hand.highlighted >= 1 and #G.hand.highlighted <= 2
+        return G.hand and #G.hand.highlighted >= 1 and #G.hand.highlighted <= 3
     end,
 
     use = function(self, card, area, copier)
@@ -1432,6 +1448,14 @@ SMODS.Consumable{
                                     G.hand.highlighted[i]:flip()
                                     G.hand.highlighted[i]:juice_up(0.3, 0.5)
                                 end
+                                
+                                G.E_MANAGER:add_event(Event({
+                                    trigger = 'after',
+                                    delay = 0.4,
+                                    func = function()
+                                        return true
+                                    end
+                                }))
                                 return true
                             end
                         }))
@@ -1463,7 +1487,7 @@ SMODS.Consumable{
     soul_set = 'Tarot',
     unlocked = true,
     discovered = true,
-    soul_rate = 0.03,
+    soul_rate = 0.02,
     can_repeat_soul = true,
     hidden = true,
 
