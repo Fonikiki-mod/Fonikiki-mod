@@ -45,6 +45,8 @@ SMODS.Atlas{
     key = 'perro',
     path = 'Fuckass_dog.png',
     px = 128,
+    display_size = { w = 71, h = 95 },
+    pixel_size = { w = 71, h = 95 },
     py = 171
 }
 
@@ -52,6 +54,7 @@ SMODS.Atlas{
 SMODS.Atlas{
     key = 'balatro_balatrez',
     path = 'Balatro_balatrez.png',
+    display_size = { w = 71, h = 76 },
     px = 406,
     py = 448
 }
@@ -60,6 +63,8 @@ SMODS.Atlas{
 SMODS.Atlas{
     key = 'que_cojones',
     path = 'pero_que_cojones_tio.png',
+    display_size = { w = 71, h = 95 },
+    pixel_size = { w = 71, h = 95 },
     px = 526,
     py = 705,
     disable_mipmap = true
@@ -1005,9 +1010,13 @@ SMODS.Joker{
     discovered = true,
     atlas = 'que_cojones',
     pos = { x = 0, y = 0 },
+    pixel_size = { w = 71, h = 95 },
+    scale = 0.135,
     rarity = 2,
     cost = 8,
     blueprint_compat = true,
+    perishable_compat = false,
+    eternal_compat = false,
     display_size = { w = 71, h = 95 },
     config = { extra = { mult = 0, count = 0, threshold = 4, gain = 4, hand_gain = 8 } },
 
@@ -1066,14 +1075,25 @@ SMODS.Joker{
     atlas = 'balatro_balatrez',
     pos = { x = 0, y = 0 },
     display_size = { w = 71, h = 76 },
+    scale = 0.135,
     rarity = 3,
     cost = 5,
     blueprint_compat = false,
-    config = { extra = { added_slots = 0 } },
+    perishable_compat = false,
+    eternal_compat = false,
+    config = { extra = { added_slots = 0, start_ante = nil } },
+
+    add_to_deck = function(self, card, from_debuff)
+        if not card.ability.extra.start_ante then
+            card.ability.extra.start_ante = G.GAME.round_resets.ante
+        end
+    end,
 
     loc_vars = function(self, info_queue, center)
-        local ante_corregido = math.max(1, G.GAME.round_resets.ante)
-        local current_req = 50 + (25 * (ante_corregido - 1))
+        local current_ante = G.GAME.round_resets.ante
+        local start_ante = center.ability.extra.start_ante or current_ante
+        local diff = math.max(0, current_ante - start_ante)
+        local current_req = 50 + (25 * diff)
         return { vars = { center.ability.extra.added_slots, current_req } }
     end,
 
@@ -1086,8 +1106,10 @@ SMODS.Joker{
 
     calculate = function(self, card, context)
         if context.end_of_round and G.GAME.blind.boss and not context.game_over and not (context.individual or context.repetition or context.blueprint) then
-            local ante_corregido = math.max(1, G.GAME.round_resets.ante)
-            local current_req = 50 + (25 * (ante_corregido - 1))
+            local current_ante = G.GAME.round_resets.ante
+            local start_ante = card.ability.extra.start_ante or current_ante
+            local diff = math.max(0, current_ante - start_ante)
+            local current_req = 50 + (25 * diff)
             local dollars = G.GAME.dollars
             local slots_to_add = 0
             if type(dollars) == 'table' then
@@ -1095,6 +1117,7 @@ SMODS.Joker{
             else
                 slots_to_add = math.floor(dollars / current_req)
             end
+
             if slots_to_add > 0 then
                 card.ability.extra.added_slots = card.ability.extra.added_slots + slots_to_add
                 G.jokers.config.card_limit = G.jokers.config.card_limit + slots_to_add
@@ -1153,6 +1176,115 @@ SMODS.Joker{
                     message = '+1 Multi.',
                     colour = G.C.MULT
                 }
+            end
+        end
+    end
+}
+
+SMODS.Joker{
+    key = 'fonikiki_jevil',
+    loc_txt = {
+        name = 'Jevil',
+        text = {
+            '{C:dark_edition}CHAOS CHAOS!!!',
+            '{C:dark_edition}I CAN DO ANYTHING!!',
+            '{s:0.5} {}',
+            'Cada {C:attention}As{} jugado tiene:',
+            '{C:green}#1# en #2#{} de dar {X:mult,C:white} X#3# {} Multi,',
+            '{C:green}#1# en #4#{} de {C:attention}destruir{} un Joker',
+            '{C:common}Común{} o {C:uncommon}Inusual{}.',
+            '{s:0.5} {}',
+            'Al final de la ronda, {C:green}#1# en #5#{} de hacer',
+            '{C:dark_edition}metamorfosis{} en un Joker aleatorio del mod.',
+            '{C:inactive}(Se incluyen {C:legendary}legendarios{C:inactive}){}'
+        }
+    },
+    config = { 
+        extra = { 
+            odds_mult = 3,
+            odds_destroy = 30, 
+            Xmult = 3,
+            odds_metamorph = 40
+        } 
+    },
+    rarity = 3,
+    blueprint_compat = false,
+    atlas = 'Jokers1',
+    pos = { x = 2, y = 4 },
+    cost = 8,
+
+    loc_vars = function(self, info_queue, card)
+        local extra = card.ability.extra
+        return { 
+            vars = { 
+                (G.GAME.probabilities.normal or 1), 
+                extra.odds_mult, 
+                extra.Xmult,
+                extra.odds_destroy,
+                extra.odds_metamorph
+            } 
+        }
+    end,
+
+    calculate = function(self, card, context)
+        local extra = card.ability.extra
+        if context.individual and context.cardarea == G.play then
+            if context.other_card:get_id() == 14 then
+                if pseudorandom('jevil_chaos') < G.GAME.probabilities.normal / extra.odds_destroy then
+                    local destructable_jokers = {}
+                    for _, v in ipairs(G.jokers.cards) do
+                        if not v.ability.eternal and not v.getting_sliced then
+                            if v.config.center.rarity == 1 or v.config.center.rarity == 2 then
+                                destructable_jokers[#destructable_jokers+1] = v
+                            end
+                        end
+                    end
+                    
+                    if #destructable_jokers > 0 then
+                        local joker_to_destroy = pseudorandom_element(destructable_jokers, pseudoseed('jevil_kill'))
+                        G.E_MANAGER:add_event(Event({
+                            func = function()
+                                play_sound('tarot1')
+                                card:juice_up(0.8, 0.5)
+                                joker_to_destroy:start_dissolve({G.C.RED}, nil, 1.6)
+                                return true
+                            end
+                        }))
+                        card_eval_status_text(card, 'extra', nil, nil, nil, {message = 'CHAOS CHAOS!', colour = G.C.RED})
+                    end
+                end
+
+                if pseudorandom('jevil_mult') < G.GAME.probabilities.normal / extra.odds_mult then
+                    return {
+                        x_mult = extra.Xmult,
+                        card = card
+                    }
+                end
+            end
+        end
+        
+        if context.end_of_round and not context.blueprint and not context.repetition then
+            if pseudorandom('jevil_morph') < G.GAME.probabilities.normal / extra.odds_metamorph then
+                local mod_jokers = {}
+                for k, v in pairs(SMODS.Centers) do
+                    if v.set == 'Joker' and v.key:find('fonikiki_') and v.key ~= card.config.center.key then
+                        mod_jokers[#mod_jokers+1] = v.key
+                    end
+                end
+                if #mod_jokers > 0 then
+                    G.E_MANAGER:add_event(Event({
+                        trigger = 'after',
+                        delay = 0.4,
+                        func = function()
+                            local new_joker = pseudorandom_element(mod_jokers, pseudoseed('jevil_morph_res'))
+                            card:set_ability(G.P_CENTERS[new_joker])
+                            card:juice_up(0.8, 0.5)
+                            play_sound('tarot2')
+                            card_eval_status_text(card, 'extra', nil, nil, nil, {message = 'I CAN DO ANYTHING!', colour = G.C.PURPLE})
+                            return true
+                        end
+                    }))
+                end
             end
         end
     end
