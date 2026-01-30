@@ -15,15 +15,20 @@ Este mod requiere de [Steamodded](https://github.com/Steamodded/smods/releases/l
 ### [Canal de YouTube de Fonikiki](https://www.youtube.com/@fonikiki2679)
 ### [Discord de Fonikiki](https://discord.gg/q9UwzZYMmu)
 
-# Instalación detallada:
+# Instalación/Actualización (para la versión más reciente) detallada:
 
+0. Si tienes una versión antigua del mod y quieres actualizarlo, borra la antigua carpeta del mod y salta al paso 3. Tu progreso y partida se guardan por lo general al intercambiar versiones.
 1. Descarga, instala y abre [Balatro Mod Manager](https://balatro-mod-manager.dasguney.com).
 2. Ve a la opción de buscar y descarga Steammodded y Talisman.
-3. En la misma aplicación entra en Settings y pulsa Open Mods Folder.
-4. Descarga este archivo de GitHub como ZIP
+3. En Balatro Mod Manager entra en Settings y pulsa Open Mods Folder.
+4. Descarga este archivo de GitHub como ZIP, se descargará la última versión del mod
 5. Descomprime el archivo ZIP y mueve la carpeta que este contiene a la ventana que se abrió en el paso anterior.
 6. Abre Balatro.
-7. Se recomienda encarecidamente no tocar la función de "Desactivar animaciones de la mano" en Talisman; de lo contrario, habrá un Joker que no funcione correctamente. Si quieres reemplazar esta función, recomiendo instalar Handy para aumentar aún más la velocidad del juego.
+
+# Recomendaciones
+
+1. No tocar la función de "Desactivar animaciones de la mano" en Talisman; de lo contrario, habrá un Joker que no funcione correctamente. Si quieres reemplazar esta función, recomiendo instalar Handy para aumentar aún más la velocidad del juego.
+2. Terminar una partida antes de actualizar por precaución
 
 # FAQ (Preguntas Frecuentes)
 
